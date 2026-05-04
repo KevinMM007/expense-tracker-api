@@ -1,5 +1,6 @@
 from functools import lru_cache
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -17,6 +18,22 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 60
 
     cors_origins: str = "*"
+
+    @field_validator("database_url", mode="before")
+    @classmethod
+    def _coerce_postgres_driver(cls, value: str) -> str:
+        """Render (and Heroku) hand out URLs like ``postgres://`` or ``postgresql://``.
+
+        SQLAlchemy with psycopg 3 needs the explicit ``postgresql+psycopg://`` driver,
+        so normalise the prefix here instead of forcing the operator to remember.
+        """
+        if not isinstance(value, str):
+            return value
+        if value.startswith("postgres://"):
+            value = "postgresql://" + value[len("postgres://") :]
+        if value.startswith("postgresql://"):
+            value = "postgresql+psycopg://" + value[len("postgresql://") :]
+        return value
 
     @property
     def cors_origins_list(self) -> list[str]:
