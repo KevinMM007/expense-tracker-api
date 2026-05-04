@@ -6,7 +6,7 @@ without a database.
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from jose import JWTError, jwt
@@ -31,7 +31,7 @@ def create_access_token(
     extra_claims: dict[str, Any] | None = None,
 ) -> str:
     settings = get_settings()
-    expire = datetime.now(tz=timezone.utc) + (
+    expire = datetime.now(tz=UTC) + (
         expires_delta or timedelta(minutes=settings.access_token_expire_minutes)
     )
     payload: dict[str, Any] = {"sub": str(subject), "exp": expire}

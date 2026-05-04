@@ -12,7 +12,7 @@ from sqlalchemy.pool import StaticPool
 
 from app.api.deps import get_db
 from app.main import app
-from app.models import Base  # noqa: F401  ensures all models are registered
+from app.models import Base
 
 
 @pytest.fixture

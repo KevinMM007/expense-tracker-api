@@ -1,0 +1,37 @@
+# VCS / docs
+.git
+.gitignore
+.github
+README.md
+
+# Python
+__pycache__
+*.py[cod]
+*.egg-info
+.pytest_cache
+.coverage
+.coverage.*
+htmlcov
+coverage.xml
+.tox
+.ruff_cache
+
+# Virtual envs
+.venv
+venv
+env
+
+# IDE / OS
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+
+# Local secrets / data
+.env
+.env.*
+*.sqlite3
+*.db
+
+# Tests (keep image lean)
+tests

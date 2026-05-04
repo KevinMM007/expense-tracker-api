@@ -29,8 +29,8 @@ class Expense(Base, TimestampMixin):
         ForeignKey("categories.id", ondelete="CASCADE"), nullable=False, index=True
     )
 
-    user: Mapped["User"] = relationship(back_populates="expenses")
-    category: Mapped["Category"] = relationship(back_populates="expenses")
+    user: Mapped[User] = relationship(back_populates="expenses")
+    category: Mapped[Category] = relationship(back_populates="expenses")
 
     def __repr__(self) -> str:  # pragma: no cover
         return (

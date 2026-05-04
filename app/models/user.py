@@ -21,10 +21,10 @@ class User(Base, TimestampMixin):
     full_name: Mapped[str | None] = mapped_column(String(120), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
-    categories: Mapped[list["Category"]] = relationship(
+    categories: Mapped[list[Category]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )
-    expenses: Mapped[list["Expense"]] = relationship(
+    expenses: Mapped[list[Expense]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )
 

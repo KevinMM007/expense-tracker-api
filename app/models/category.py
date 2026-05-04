@@ -22,8 +22,8 @@ class Category(Base, TimestampMixin):
         ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
     )
 
-    user: Mapped["User"] = relationship(back_populates="categories")
-    expenses: Mapped[list["Expense"]] = relationship(
+    user: Mapped[User] = relationship(back_populates="categories")
+    expenses: Mapped[list[Expense]] = relationship(
         back_populates="category", cascade="all, delete-orphan"
     )
 
