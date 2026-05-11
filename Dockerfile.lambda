@@ -1,0 +1,30 @@
+# syntax=docker/dockerfile:1.7
+
+# ---------------------------------------------------------------------------
+# AWS Lambda container image for the Expense Tracker API.
+#
+# This is a SEPARATE Dockerfile from the standard Dockerfile used by Render.
+# Lambda has its own runtime contract (no long-running uvicorn process,
+# specific handler entry point, specific filesystem layout), so we use the
+# official AWS Lambda Python 3.13 base image which ships with the Lambda
+# Runtime Interface Client (RIC) already installed.
+#
+# Image size: ~250 MB - well under Lambda's 10 GB container image limit.
+# ---------------------------------------------------------------------------
+
+FROM public.ecr.aws/lambda/python:3.13
+
+# Install dependencies first so they land in their own cache layer and
+# don't get invalidated every time application code changes.
+COPY requirements.txt ${LAMBDA_TASK_ROOT}/
+RUN pip install --no-cache-dir -r ${LAMBDA_TASK_ROOT}/requirements.txt \
+        --target ${LAMBDA_TASK_ROOT}
+
+# Application code and migrations
+COPY app/         ${LAMBDA_TASK_ROOT}/app/
+COPY alembic/     ${LAMBDA_TASK_ROOT}/alembic/
+COPY alembic.ini  ${LAMBDA_TASK_ROOT}/
+
+# Lambda expects the handler in the form ``<module>.<callable>``.
+# ``app.lambda_handler.handler`` is the Mangum-wrapped FastAPI app.
+CMD ["app.lambda_handler.handler"]

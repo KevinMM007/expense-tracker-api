@@ -10,3 +10,11 @@ python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
 bcrypt==4.0.1
 python-multipart==0.0.20
+
+# AWS Lambda adapter for ASGI (FastAPI) — only used in the AWS deployment;
+# the Render deployment ignores it, so the additional ~50 KB is negligible.
+mangum==0.19.0
+
+# AWS SDK for fetching the RDS master credentials from Secrets Manager at
+# Lambda cold start. Lazy-imported inside config.py, so Render never loads it.
+boto3==1.35.86
