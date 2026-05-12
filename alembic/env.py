@@ -17,8 +17,18 @@ from app.models import Base  # registers all models on Base.metadata
 # Alembic Config object
 config = context.config
 
-# Inject the runtime database URL so it doesn't have to live in alembic.ini
-config.set_main_option("sqlalchemy.url", get_settings().database_url)
+# Inject the runtime database URL so it doesn't have to live in alembic.ini.
+#
+# ConfigParser (the parser Alembic uses for its ini section) treats a bare
+# `%` as variable-interpolation syntax (``%(varname)s``). URL-encoded
+# password characters like `%5B` (an encoded '[') would trip that parser,
+# so we double every percent before storing the URL. SQLAlchemy parses the
+# URL itself when the engine is built, so this escape only affects
+# ConfigParser - the actual connection string handed to psycopg is unchanged.
+config.set_main_option(
+    "sqlalchemy.url",
+    get_settings().database_url.replace("%", "%%"),
+)
 
 # Set up logging
 if config.config_file_name is not None:

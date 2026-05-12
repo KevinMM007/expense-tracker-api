@@ -30,16 +30,10 @@ def _run_migrations() -> None:
     from alembic.config import Config
 
     # ``/var/task`` is the LAMBDA_TASK_ROOT inside the container.
+    # alembic/env.py reads DATABASE_URL via get_settings() itself (and
+    # handles the ConfigParser percent-escaping), so we don't redo that here.
     config = Config("/var/task/alembic.ini")
     config.set_main_option("script_location", "/var/task/alembic")
-
-    # Resolve the (possibly Secrets-Manager-hydrated) DB URL once and pass
-    # it to Alembic explicitly so it doesn't have to reach into our pydantic
-    # Settings object on its own.
-    from app.core.config import get_settings
-
-    settings = get_settings()
-    config.set_main_option("sqlalchemy.url", settings.database_url)
 
     command.upgrade(config, "head")
     print("[lambda_handler] alembic upgrade head completed", file=sys.stderr)
